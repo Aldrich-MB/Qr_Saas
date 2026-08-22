@@ -1,5 +1,5 @@
 """
-Modelo de datos — el núcleo del producto.
+Modelo de datos: El núcleo del producto.
 
 La idea central: el QR impreso codifica un `slug` fijo (ej. "AB3X9K").
 Ese slug nunca cambia. Lo que SÍ cambia es el campo `destination_url`
@@ -29,7 +29,6 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     qr_codes = relationship("QRCode", back_populates="owner", cascade="all, delete-orphan")
-
 
 class QRCode(Base):
     __tablename__ = "qr_codes"
