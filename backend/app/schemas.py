@@ -1,3 +1,6 @@
+"""
+Schemas Pydantic para validación de datos de entrada/salida.
+"""
 from datetime import datetime
 from pydantic import BaseModel
 

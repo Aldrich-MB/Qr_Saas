@@ -1,11 +1,12 @@
+"""
+Operaciones CRUD para la base de datos.
+"""
 import secrets
 import string
-
 from sqlalchemy.orm import Session
-
 from app import models
 
-ALPHABET = string.ascii_uppercase + string.digits  # ej. "AB3X9K" — sin ambigüedad visual grave
+ALPHABET = string.ascii_uppercase + string.digits
 
 
 def generate_slug(length: int = 6) -> str:
@@ -13,7 +14,7 @@ def generate_slug(length: int = 6) -> str:
 
 
 def generate_unique_slug(db: Session, length: int = 6, max_attempts: int = 10) -> str:
-    """Genera un slug y verifica que no exista ya en la DB (colisión muy improbable, pero se checa)."""
+    """Genera un slug y verifica que no exista ya en la DB."""
     for _ in range(max_attempts):
         slug = generate_slug(length)
         exists = db.query(models.QRCode).filter(models.QRCode.slug == slug).first()

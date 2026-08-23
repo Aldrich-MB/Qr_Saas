@@ -13,11 +13,12 @@ Nota: no hay generación de imagen PNG del QR todavía — eso es la Parte 2.
 Aquí solo se valida que el modelo de datos y el redirect funcionen.
 """
 from fastapi import FastAPI, Depends, HTTPException, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from sqlalchemy.orm import Session
 
 from app import models, schemas, crud
 from app.database import engine, get_db, Base
+from app.qr.generator import generate_qr_image
 
 # Crea las tablas si no existen (en producción esto se reemplaza por migraciones con Alembic)
 Base.metadata.create_all(bind=engine)
@@ -98,12 +99,26 @@ def get_stats(slug: str, db: Session = Depends(get_db)):
         id=qr.id, slug=qr.slug, destination_url=qr.destination_url,
         label=qr.label, created_at=qr.created_at, total_scans=crud.count_scans(db, qr.id),
     )
-# Main
+
+
+@app.get("/qr/{slug}/image")
+def get_qr_image(slug: str, db: Session = Depends(get_db)):
+    """
+    Devuelve la imagen PNG del QR, lista para descargar e imprimir.
+    Ojo: la imagen codifica la URL de redirect fija (BASE_URL + slug),
+    NUNCA el destination_url actual — así el cartel impreso no cambia
+    aunque el cliente edite el destino desde el panel.
+    """
+    qr = db.query(models.QRCode).filter(models.QRCode.slug == slug).first()
+    if not qr:
+        raise HTTPException(status_code=404, detail="Código QR no encontrado")
+
+    image_bytes = generate_qr_image(qr.slug)
+    return Response(content=image_bytes, media_type="image/png")
+
+
+# Permite arrancar el servidor con: python app/main.py
+# (alternativa a usar el comando "uvicorn app.main:app --reload" en la terminal)
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        "app.main:app",
-        host="127.0.0.1",
-        port=8000,
-        reload=True
-    )
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
