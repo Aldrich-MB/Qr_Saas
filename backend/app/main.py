@@ -19,40 +19,45 @@ from sqlalchemy.orm import Session
 from app import models, schemas, crud
 from app.database import engine, get_db, Base
 from app.qr.generator import generate_qr_image
+from app.auth.routes import router as auth_router
+from app.auth.dependencies import get_current_user
 
 # Crea las tablas si no existen (en producción esto se reemplaza por migraciones con Alembic)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="QR Dinámico — API")
-
-# --- Usuario de prueba temporal, hasta que exista auth real (Parte 3) ---
-TEST_USER_ID = "test-user-000"
-
-
-def ensure_test_user(db: Session):
-    user = db.query(models.User).filter(models.User.id == TEST_USER_ID).first()
-    if not user:
-        user = models.User(id=TEST_USER_ID, email="prueba@local.dev", hashed_password="temporal")
-        db.add(user)
-        db.commit()
-    return user
-
-
-@app.on_event("startup")
-def on_startup():
-    db = next(get_db())
-    ensure_test_user(db)
+app.include_router(auth_router)
 
 
 @app.post("/qr", response_model=schemas.QRCodeOut)
-def create_qr(payload: schemas.QRCodeCreate, db: Session = Depends(get_db)):
+def create_qr(
+    payload: schemas.QRCodeCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
     qr = crud.create_qr_code(
-        db, owner_id=TEST_USER_ID, destination_url=payload.destination_url, label=payload.label
+        db, owner_id=current_user.id, destination_url=payload.destination_url, label=payload.label
     )
     return schemas.QRCodeOut(
         id=qr.id, slug=qr.slug, destination_url=qr.destination_url,
         label=qr.label, created_at=qr.created_at, total_scans=0,
     )
+
+
+@app.get("/qr", response_model=list[schemas.QRCodeOut])
+def list_my_qr_codes(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Lista todos los QR del usuario logueado — lo que alimenta el dashboard del panel."""
+    qr_codes = db.query(models.QRCode).filter(models.QRCode.owner_id == current_user.id).all()
+    return [
+        schemas.QRCodeOut(
+            id=qr.id, slug=qr.slug, destination_url=qr.destination_url,
+            label=qr.label, created_at=qr.created_at, total_scans=crud.count_scans(db, qr.id),
+        )
+        for qr in qr_codes
+    ]
 
 
 @app.get("/q/{slug}")
@@ -73,11 +78,18 @@ def scan_redirect(slug: str, request: Request, db: Session = Depends(get_db)):
 
 
 @app.patch("/qr/{slug}", response_model=schemas.QRCodeOut)
-def update_destination(slug: str, payload: schemas.QRCodeUpdate, db: Session = Depends(get_db)):
+def update_destination(
+    slug: str,
+    payload: schemas.QRCodeUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
     """Esto es lo que el cliente usa desde el panel para 'cambiar la carta'."""
     qr = db.query(models.QRCode).filter(models.QRCode.slug == slug).first()
     if not qr:
         raise HTTPException(status_code=404, detail="Código QR no encontrado")
+    if qr.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Este QR no te pertenece")
 
     qr.destination_url = payload.destination_url
     db.commit()
@@ -90,10 +102,16 @@ def update_destination(slug: str, payload: schemas.QRCodeUpdate, db: Session = D
 
 
 @app.get("/qr/{slug}/stats", response_model=schemas.QRCodeOut)
-def get_stats(slug: str, db: Session = Depends(get_db)):
+def get_stats(
+    slug: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
     qr = db.query(models.QRCode).filter(models.QRCode.slug == slug).first()
     if not qr:
         raise HTTPException(status_code=404, detail="Código QR no encontrado")
+    if qr.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Este QR no te pertenece")
 
     return schemas.QRCodeOut(
         id=qr.id, slug=qr.slug, destination_url=qr.destination_url,
