@@ -13,6 +13,7 @@ Nota: no hay generación de imagen PNG del QR todavía — eso es la Parte 2.
 Aquí solo se valida que el modelo de datos y el redirect funcionen.
 """
 from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse, Response
 from sqlalchemy.orm import Session
 
@@ -26,6 +27,17 @@ from app.auth.dependencies import get_current_user
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="QR Dinámico — API")
+
+# Permite que el panel de React (corriendo en otro puerto) llame a esta API.
+# En producción, cambia allow_origins a tu dominio real del frontend.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(auth_router)
 
 
