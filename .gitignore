@@ -77,3 +77,5 @@ backend/app/__pycache__/
 Thumbs.db
 Desktop.ini
 " > .gitignor
+
+node_modules/
