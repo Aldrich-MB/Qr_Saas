@@ -7,7 +7,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Formulario de creación
   const [destinationUrl, setDestinationUrl] = useState("");
   const [label, setLabel] = useState("");
   const [creating, setCreating] = useState(false);
@@ -37,7 +36,7 @@ export default function Dashboard() {
       await qrApi.create(destinationUrl, label);
       setDestinationUrl("");
       setLabel("");
-      loadQrCodes(); // refresca la lista con el nuevo QR incluido
+      loadQrCodes();
     } catch (err) {
       setError("No se pudo crear el código.");
     } finally {
@@ -51,65 +50,68 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ maxWidth: 700, margin: "40px auto", fontFamily: "sans-serif" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>Mis códigos QR</h1>
-        <button onClick={handleLogout}>Cerrar sesión</button>
+    <div className="qs-page qs-page--wide">
+      <div className="qs-topbar">
+        <div>
+          <p className="qs-eyebrow">Qr_Saas</p>
+          <h1>Mis códigos</h1>
+        </div>
+        <button className="qs-btn qs-btn--ghost" onClick={handleLogout}>
+          Cerrar sesión
+        </button>
       </div>
 
-      <form onSubmit={handleCreate} style={{ margin: "20px 0", padding: 16, border: "1px solid #ddd" }}>
+      <div className="qs-ticket qs-ticket--form">
         <h3>Crear nuevo QR</h3>
-        <input
-          type="url"
-          placeholder="https://tu-carta.com"
-          value={destinationUrl}
-          onChange={(e) => setDestinationUrl(e.target.value)}
-          required
-          style={{ width: "60%", padding: 8, marginRight: 8 }}
-        />
-        <input
-          type="text"
-          placeholder="Etiqueta (ej. Mesa 1)"
-          value={label}
-          onChange={(e) => setLabel(e.target.value)}
-          style={{ width: "25%", padding: 8, marginRight: 8 }}
-        />
-        <button type="submit" disabled={creating}>
-          {creating ? "Creando..." : "Crear"}
-        </button>
-      </form>
+        <form onSubmit={handleCreate} className="qs-form-row">
+          <div className="qs-field">
+            <label htmlFor="dest">Destino</label>
+            <input
+              id="dest"
+              type="url"
+              className="qs-input"
+              placeholder="https://tu-carta.com"
+              value={destinationUrl}
+              onChange={(e) => setDestinationUrl(e.target.value)}
+              required
+            />
+          </div>
+          <div className="qs-field">
+            <label htmlFor="label">Etiqueta</label>
+            <input
+              id="label"
+              type="text"
+              className="qs-input"
+              placeholder="Mesa 1"
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+            />
+          </div>
+          <button type="submit" className="qs-btn" disabled={creating}>
+            {creating ? "Creando…" : "Crear"}
+          </button>
+        </form>
+      </div>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="qs-error">{error}</p>}
 
       {loading ? (
-        <p>Cargando...</p>
+        <p className="qs-subtitle">Cargando…</p>
       ) : qrCodes.length === 0 ? (
-        <p>Todavía no tienes ningún código QR. Crea el primero arriba.</p>
+        <div className="qs-empty">Todavía no tienes ningún código. Crea el primero arriba.</div>
       ) : (
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ textAlign: "left", borderBottom: "2px solid #ddd" }}>
-              <th style={{ padding: 8 }}>Etiqueta</th>
-              <th style={{ padding: 8 }}>Destino actual</th>
-              <th style={{ padding: 8 }}>Escaneos</th>
-              <th style={{ padding: 8 }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {qrCodes.map((qr) => (
-              <tr key={qr.id} style={{ borderBottom: "1px solid #eee" }}>
-                <td style={{ padding: 8 }}>{qr.label || "(sin etiqueta)"}</td>
-                <td style={{ padding: 8, maxWidth: 250, overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {qr.destination_url}
-                </td>
-                <td style={{ padding: 8 }}>{qr.total_scans}</td>
-                <td style={{ padding: 8 }}>
-                  <Link to={`/qr/${qr.slug}`}>Ver / editar</Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="qs-ticket">
+          {qrCodes.map((qr) => (
+            <div className="qs-list-item" key={qr.id}>
+              <div>
+                <div className="qs-list-label">{qr.label || "(sin etiqueta)"}</div>
+                <span className="qs-list-url">{qr.destination_url}</span>
+              </div>
+              <div className="qs-list-count">{qr.total_scans} escaneos</div>
+              <Link to={`/qr/${qr.slug}`}>Ver / editar</Link>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

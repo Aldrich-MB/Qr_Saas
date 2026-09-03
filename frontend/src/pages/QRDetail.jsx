@@ -31,7 +31,7 @@ export default function QRDetail() {
     try {
       await qrApi.updateDestination(slug, destinationUrl);
       setSaved(true);
-      loadStats(); // refresca para confirmar el cambio guardado
+      loadStats();
     } catch (err) {
       setError("No se pudo guardar el cambio.");
     } finally {
@@ -39,45 +39,53 @@ export default function QRDetail() {
     }
   }
 
-  if (error) return <p style={{ color: "red", textAlign: "center", marginTop: 40 }}>{error}</p>;
-  if (!qr) return <p style={{ textAlign: "center", marginTop: 40 }}>Cargando...</p>;
+  if (error) return <div className="qs-page"><p className="qs-error">{error}</p></div>;
+  if (!qr) return <div className="qs-page"><p className="qs-subtitle">Cargando…</p></div>;
 
   return (
-    <div style={{ maxWidth: 500, margin: "40px auto", fontFamily: "sans-serif" }}>
-      <Link to="/dashboard">&larr; Volver</Link>
+    <div className="qs-page">
+      <Link to="/dashboard" className="qs-back-link">&larr; Volver</Link>
+
+      <p className="qs-eyebrow">Folio {slug}</p>
       <h1>{qr.label || "QR sin etiqueta"}</h1>
 
-      <div style={{ textAlign: "center", margin: "20px 0" }}>
-        <img
-          src={qrApi.imageUrl(slug)}
-          alt={`Código QR ${slug}`}
-          style={{ border: "1px solid #ddd", padding: 10 }}
-        />
-        <p>
+      <div className="qs-qr-block">
+        <img src={qrApi.imageUrl(slug)} alt={`Código QR ${slug}`} className="qs-qr-image" width={220} height={220} />
+        <p style={{ marginTop: 10 }}>
           <a href={qrApi.imageUrl(slug)} download={`qr-${slug}.png`}>
-            Descargar imagen para imprimir
+            Descargar para imprimir
           </a>
         </p>
       </div>
 
-      <div style={{ padding: 16, background: "#f5f5f5", marginBottom: 20 }}>
-        <strong>Escaneos totales: {qr.total_scans}</strong>
+      <div style={{ textAlign: "center", marginBottom: 28 }}>
+        <div className="qs-stamp-count">
+          <strong>{qr.total_scans}</strong>
+          <span>escaneos<br />totales</span>
+        </div>
       </div>
 
-      <form onSubmit={handleSave}>
-        <label>Cambiar destino (la imagen del QR no cambia)</label>
-        <input
-          type="url"
-          value={destinationUrl}
-          onChange={(e) => setDestinationUrl(e.target.value)}
-          required
-          style={{ width: "100%", padding: 8, margin: "8px 0" }}
-        />
-        <button type="submit" disabled={saving}>
-          {saving ? "Guardando..." : "Guardar nuevo destino"}
-        </button>
-        {saved && <span style={{ color: "green", marginLeft: 10 }}>Guardado ✓</span>}
-      </form>
+      <hr className="qs-tear" />
+
+      <div className="qs-ticket qs-ticket--form">
+        <h3>Cambiar destino</h3>
+        <p className="qs-subtitle">La imagen del QR no cambia — el cartel impreso sigue sirviendo.</p>
+        <form onSubmit={handleSave}>
+          <div className="qs-field">
+            <input
+              type="url"
+              className="qs-input"
+              value={destinationUrl}
+              onChange={(e) => setDestinationUrl(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="qs-btn" disabled={saving}>
+            {saving ? "Guardando…" : "Guardar nuevo destino"}
+          </button>
+          {saved && <span className="qs-success" style={{ marginLeft: 12 }}>Guardado ✓</span>}
+        </form>
+      </div>
     </div>
   );
 }
