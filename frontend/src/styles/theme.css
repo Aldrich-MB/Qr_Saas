@@ -1,0 +1,352 @@
+/* ============================================================
+   Qr_Saas — sistema de diseño
+   Inspirado en tickets impresos / recibos de comanda / sellos
+   de tinta — el mundo físico donde vive el producto (el QR
+   pegado en la mesa de un bar).
+   ============================================================ */
+
+:root {
+  --paper: #f2efe6;
+  --paper-line: #dad5c4;
+  --paper-raised: #ffffff;
+
+  --ink: #21201c;
+  --ink-soft: #6b6558;
+  --ink-faint: #a8a294;
+
+  --stamp: #1c6e8c;
+  --stamp-dark: #124f63;
+  --stamp-tint: #e4eef1;
+
+  --alert: #b33122;
+  --alert-tint: #f6e5e2;
+
+  --ok: #2f6b3a;
+
+  --font-sans: "IBM Plex Sans", -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --radius: 2px; /* casi sin redondeo — es papel, no vidrio */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  background-image: linear-gradient(var(--paper-line) 1px, transparent 1px);
+  background-size: 100% 32px;
+  background-attachment: fixed;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px 0;
+}
+
+a {
+  color: var(--stamp);
+}
+
+/* ---------- Layout base ---------- */
+
+.qs-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+.qs-page--wide {
+  max-width: 880px;
+}
+
+.qs-page--center {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.qs-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.qs-topbar h1 {
+  font-size: 22px;
+}
+
+/* ---------- Ticket / tarjeta ---------- */
+
+.qs-ticket {
+  background: var(--paper-raised);
+  border: 1px solid var(--paper-line);
+  border-left: 3px solid var(--stamp);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.qs-ticket--form {
+  border-left-color: var(--ink);
+}
+
+.qs-ticket--auth {
+  width: 100%;
+  max-width: 380px;
+  border-left-width: 4px;
+}
+
+.qs-tear {
+  border: none;
+  border-top: 1px dashed var(--paper-line);
+  margin: 16px 0;
+}
+
+/* ---------- Tipografía de datos ---------- */
+
+.qs-mono {
+  font-family: var(--font-mono);
+}
+
+.qs-slug {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
+.qs-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
+  margin: 0 0 4px 0;
+}
+
+.qs-subtitle {
+  color: var(--ink-soft);
+  font-size: 14px;
+  margin: 0 0 24px 0;
+}
+
+/* ---------- Formularios ---------- */
+
+.qs-field {
+  margin-bottom: 16px;
+}
+
+.qs-field label {
+  display: block;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+.qs-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--paper-raised);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+}
+
+.qs-input:focus {
+  outline: 2px solid var(--stamp);
+  outline-offset: 1px;
+  border-color: var(--stamp);
+}
+
+.qs-form-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.qs-form-row .qs-field {
+  flex: 1;
+  min-width: 160px;
+  margin-bottom: 0;
+}
+
+/* ---------- Botones ---------- */
+
+.qs-btn {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+}
+
+.qs-btn:hover:not(:disabled) {
+  background: var(--stamp-dark);
+  border-color: var(--stamp-dark);
+}
+
+.qs-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.qs-btn--full {
+  width: 100%;
+}
+
+.qs-btn--ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--paper-line);
+}
+
+.qs-btn--ghost:hover:not(:disabled) {
+  border-color: var(--ink);
+  background: transparent;
+}
+
+/* ---------- Mensajes ---------- */
+
+.qs-error {
+  font-size: 13px;
+  color: var(--alert);
+  background: var(--alert-tint);
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  margin: 12px 0;
+}
+
+.qs-success {
+  font-size: 13px;
+  color: var(--ok);
+}
+
+.qs-footnote {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 20px;
+}
+
+/* ---------- Sello de escaneos ---------- */
+
+.qs-stamp-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  border: 2px solid var(--stamp);
+  color: var(--stamp);
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  transform: rotate(-1deg);
+}
+
+.qs-stamp-count strong {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.qs-stamp-count span {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--stamp-dark);
+}
+
+/* ---------- Lista de tickets (dashboard) ---------- */
+
+.qs-list-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 4px;
+  border-bottom: 1px dashed var(--paper-line);
+}
+
+.qs-list-item:first-child {
+  border-top: 1px dashed var(--paper-line);
+}
+
+.qs-list-label {
+  font-weight: 600;
+}
+
+.qs-list-url {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 260px;
+  display: block;
+}
+
+.qs-list-count {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.qs-empty {
+  text-align: center;
+  color: var(--ink-soft);
+  padding: 40px 20px;
+  border: 1px dashed var(--paper-line);
+  border-radius: var(--radius);
+}
+
+.qs-qr-image {
+  border: 1px solid var(--paper-line);
+  padding: 16px;
+  background: var(--paper-raised);
+  display: block;
+  margin: 0 auto;
+}
+
+.qs-qr-block {
+  text-align: center;
+  margin: 24px 0;
+}
+
+.qs-back-link {
+  display: inline-block;
+  font-size: 13px;
+  margin-bottom: 16px;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.qs-back-link:hover {
+  color: var(--stamp);
+}
+
+@media (max-width: 480px) {
+  .qs-list-item {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .qs-list-url {
+    max-width: 100%;
+  }
+}
