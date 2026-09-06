@@ -1,10 +1,3 @@
-/* ============================================================
-   Qr_Saas — sistema de diseño
-   Inspirado en tickets impresos / recibos de comanda / sellos
-   de tinta — el mundo físico donde vive el producto (el QR
-   pegado en la mesa de un bar).
-   ============================================================ */
-
 :root {
   --paper: #f2efe6;
   --paper-line: #dad5c4;
