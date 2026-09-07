@@ -1,8 +1,10 @@
+// frontend/src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import QRDetail from "./pages/QRDetail";
+import LandingPage from "./pages/LandingPage"; 
 
 function RequireAuth({ children }) {
   const token = localStorage.getItem("qr_saas_token");
@@ -16,7 +18,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* RUTA PRINCIPAL: Landing Page */}
+        <Route path="/" element={<LandingPage />} />  {/* ← CAMBIADO */}
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
