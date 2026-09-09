@@ -1,6 +1,13 @@
+/* ============================================================
+   Qr_Saas — sistema de diseño
+   Inspirado en tickets impresos / recibos de comanda / sellos
+   de tinta — el mundo físico donde vive el producto (el QR
+   pegado en la mesa de un bar).
+   ============================================================ */
+
 :root {
-  --paper: #f2efe6;
-  --paper-line: #dad5c4;
+  --paper: rgb(255, 228, 196);     /* ← NUEVO COLOR BISQUE */
+  --paper-line: #d4c4a8;           /* Ajustado para que combine con bisque */
   --paper-raised: #ffffff;
 
   --ink: #21201c;
@@ -19,7 +26,8 @@
   --font-sans: "IBM Plex Sans", -apple-system, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  --radius: 2px; /* casi sin redondeo — es papel, no vidrio */
+  --radius: 2px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 * {
@@ -190,6 +198,7 @@ a {
   background: var(--ink);
   color: var(--paper);
   cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
 }
 
 .qs-btn:hover:not(:disabled) {
@@ -334,28 +343,16 @@ a {
   color: var(--stamp);
 }
 
-@media (max-width: 480px) {
-  .qs-list-item {
-    grid-template-columns: 1fr;
-    gap: 4px;
-  }
-  .qs-list-url {
-    max-width: 100%;
-  }
-}
-
-/* ============================================
+/* ============================================================
    LANDING PAGE - Estilos específicos
-   ============================================ */
+   ============================================================ */
 
-/* Contenedor principal */
 .landing-page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* ===== HERO ===== */
 .hero {
   display: flex;
   align-items: center;
@@ -427,7 +424,6 @@ a {
   color: var(--ink-faint);
 }
 
-/* ===== IMAGEN DEL HERO ===== */
 .hero-image {
   flex: 1;
   display: flex;
@@ -471,7 +467,7 @@ a {
   padding-top: 8px;
 }
 
-/* ===== FEATURES ===== */
+/* Features */
 .features {
   padding: 60px 0;
   text-align: center;
@@ -519,7 +515,7 @@ a {
   line-height: 1.5;
 }
 
-/* ===== SOCIAL PROOF ===== */
+/* Social Proof */
 .social-proof {
   text-align: center;
   padding: 30px 0;
@@ -534,7 +530,7 @@ a {
   font-size: 1.3rem;
 }
 
-/* ===== FOOTER ===== */
+/* Footer */
 .landing-footer {
   text-align: center;
   padding: 30px 0 20px;
@@ -542,7 +538,10 @@ a {
   font-size: 0.85rem;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
 @media (max-width: 768px) {
   .hero {
     flex-direction: column;
@@ -599,5 +598,14 @@ a {
 
   .feature-grid {
     grid-template-columns: 1fr;
+  }
+
+  .qs-list-item {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .qs-list-url {
+    max-width: 100%;
   }
 }
