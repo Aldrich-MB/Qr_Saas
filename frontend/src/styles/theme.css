@@ -1,13 +1,6 @@
-/* ============================================================
-   Qr_Saas — sistema de diseño
-   Inspirado en tickets impresos / recibos de comanda / sellos
-   de tinta — el mundo físico donde vive el producto (el QR
-   pegado en la mesa de un bar).
-   ============================================================ */
-
 :root {
-  --paper: rgb(255, 228, 196);     /* ← NUEVO COLOR BISQUE */
-  --paper-line: #d4c4a8;           /* Ajustado para que combine con bisque */
+  --paper: rgb(255, 228, 196);     
+  --paper-line: #d4c4a8;           
   --paper-raised: #ffffff;
 
   --ink: #21201c;
