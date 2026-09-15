@@ -53,7 +53,7 @@ export default function Dashboard() {
     <div className="qs-page qs-page--wide">
       <div className="qs-topbar">
         <div>
-          <p className="qs-eyebrow">Qr_Saas</p>
+          <p className="qs-eyebrow">QR Dynamic</p>
           <h1>Mis códigos</h1>
         </div>
         <button className="qs-btn qs-btn--ghost" onClick={handleLogout}>
