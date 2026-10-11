@@ -22,7 +22,7 @@ Base = declarative_base()
 
 
 def get_db():
-    """Dependency de FastAPI: abre una sesión de DB por request y la cierra al terminar."""
+    #Dependency de FastAPI: abre una sesión de DB por request y la cierra al terminar
     db = SessionLocal()
     try:
         yield db
