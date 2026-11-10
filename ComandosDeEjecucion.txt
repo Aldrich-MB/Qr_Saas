@@ -1,0 +1,9 @@
+En la carpeta del BACKED abrir una terminal y colcoar 
+
+venv\Scripts\activate
+
+python -m app.main
+
+En la carpeta del FRONED abrir una terminal y colcoar 
+
+npm run dev
